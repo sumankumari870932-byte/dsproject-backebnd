@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attack Logs</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#eef2ff,#e0f2fe);
+color:#1e293b;
+min-height:100vh;
+}
+
+.navbar{
+display:flex;
+flex-direction:column;
+align-items:center;
+padding:15px;
+background:white;
+box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.title{
+font-size:22px;
+font-weight:bold;
+color:#2563eb;
+}
+
+.navlinks{
+margin-top:10px;
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+justify-content:center;
+}
+
+.navlinks a{
+text-decoration:none;
+color:#334155;
+font-size:14px;
+}
+
+.navlinks a:hover{
+color:#2563eb;
+}
+
+.main{
+max-width:1200px;
+margin:auto;
+padding:30px;
+}
+
+h1{
+margin-bottom:20px;
+}
+
+.search-box{
+margin-bottom:20px;
+}
+
+.search-box input{
+width:100%;
+max-width:300px;
+padding:10px;
+border-radius:6px;
+border:1px solid #cbd5e1;
+}
+
+.table-wrapper{
+overflow-x:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+border-radius:10px;
+min-width:600px;
+}
+
+th,td{
+padding:14px;
+border-bottom:1px solid #e2e8f0;
+text-align:left;
+font-size:14px;
+}
+
+th{
+background:#eff6ff;
+color:#2563eb;
+}
+
+.danger{
+color:#dc2626;
+font-weight:bold;
+}
+
+.normal{
+color:#16a34a;
+font-weight:bold;
+}
+
+footer{
+margin-top:40px;
+padding:20px;
+text-align:center;
+background:white;
+border-top:1px solid #e2e8f0;
+}
+
+@media(max-width:600px){
+.main{
+padding:20px;
+}
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+<div class="title">Attack Logs</div>
+
+<div class="navlinks">
+<a href="{% url 'dashboard' %}">Dashboard</a>
+<a href="{% url 'logs' %}">Logs</a>
+<a href="{% url 'monitor' %}">Monitor</a>
+<a href="{% url 'attackers' %}">Attackers</a>
+<a href="{% url 'analysis' %}">Analysis</a>
+<a href="{% url 'settings' %}">Settings</a>
+</div>
+
+</header>
+
+<div class="main">
+
+<h1>All Attack Logs</h1>
+
+<div class="search-box">
+<input type="text" placeholder="Search by IP or Attack Type">
+</div>
+
+<div class="table-wrapper">
+
+<table>
+
+<tr>
+<th>IP Address</th>
+<th>Attack Type</th>
+<th>Payload</th>
+<th>Time</th>
+<th>Status</th>
+</tr>
+
+{% for attack in attacks %}
+<tr>
+<td>{{ attack.ip_address }}</td>
+<td>{{ attack.attack_type }}</td>
+<td>{{ attack.payload }}</td>
+<td>{{ attack.time|date:"d M Y, h:i A" }}</td>
+
+<td class="{% if attack.status == 'Blocked' %}danger{% else %}normal{% endif %}">
+{{ attack.status }}
+</td>
+
+</tr>
+{% empty %}
+<tr>
+<td colspan="5">No attack logs found</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+<footer>
+© 2026 Honeypot Intrusion Detection System
+</footer>
+
+</div>
+
+</body>
+</html>
