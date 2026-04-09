@@ -3,7 +3,7 @@ from django.db.models import Count
 from .models import Attack, Attacker, Setting
 from .utils import detect_attack, get_country_from_ip
 from django.views.decorators.csrf import csrf_exempt
-
+from django.db.models.functions import ExtractWeekDay
 
 
 def get_client_ip(request):
@@ -32,7 +32,7 @@ def dashboard(request):
     today_attacks = Attack.objects.count()
     sql_count = Attack.objects.filter(attack_type='SQL Injection').count()
     brute_count = Attack.objects.filter(attack_type='Brute Force').count()
-    recent_attacks = Attack.objects.order_by('-time')
+    recent_attacks = Attack.objects.order_by('-time')[:5]
 
     context = {
         'attacks': attacks,
@@ -66,14 +66,44 @@ def analysis_view(request):
     brute_count = Attack.objects.filter(attack_type='Brute Force').count()
     cmd_count = Attack.objects.filter(attack_type='Command Injection').count()
 
+    # Weekday wise attacks count
+    weekday_data = (
+        Attack.objects
+        .annotate(weekday=ExtractWeekDay('time'))
+        .values('weekday')
+        .annotate(total=Count('id'))
+        .order_by('weekday')
+    )
+
+    day_counts = {
+        2: 0,  # Mon
+        3: 0,  # Tue
+        4: 0,  # Wed
+        5: 0,  # Thu
+        6: 0,  # Fri
+        7: 0,  # Sat
+        1: 0,  # Sun
+    }
+
+    for item in weekday_data:
+        day_counts[item['weekday']] = item['total']
+
     context = {
         'sql_count': sql_count,
         'xss_count': xss_count,
         'brute_count': brute_count,
         'cmd_count': cmd_count,
-    }
-    return render(request, 'analysis.html', context)
 
+        'mon': day_counts[2],
+        'tue': day_counts[3],
+        'wed': day_counts[4],
+        'thu': day_counts[5],
+        'fri': day_counts[6],
+        'sat': day_counts[7],
+        'sun': day_counts[1],
+    }
+
+    return render(request, 'analysis.html', context)
 
 def settings_view(request):
     setting, created = Setting.objects.get_or_create(id=1)
@@ -115,6 +145,6 @@ def honeypot_login(request):
 
         update_attacker(ip)
 
-        message = "Login Failed! Unauthorized activity monitored."
+        message = "Login Failed!"
 
     return render(request, 'login.html', {'message': message})
