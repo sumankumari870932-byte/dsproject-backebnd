@@ -26,13 +26,11 @@ def update_attacker(ip):
 
 
 def dashboard(request):
-    attacks = Attack.objects.order_by('-time')[:5]
-
     total_attacks = Attack.objects.count()
     today_attacks = Attack.objects.count()
     sql_count = Attack.objects.filter(attack_type='SQL Injection').count()
     brute_count = Attack.objects.filter(attack_type='Brute Force').count()
-    recent_attacks = Attack.objects.order_by('-time')
+    recent_attacks = Attack.objects.order_by('-time')[:5]
 
     context = {
         'attacks': attacks,
@@ -66,12 +64,44 @@ def analysis_view(request):
     brute_count = Attack.objects.filter(attack_type='Brute Force').count()
     cmd_count = Attack.objects.filter(attack_type='Command Injection').count()
 
+    # Weekday wise attacks count
+    weekday_data = (
+        Attack.objects
+        .annotate(weekday=ExtractWeekDay('time'))
+        .values('weekday')
+        .annotate(total=Count('id'))
+        .order_by('weekday')
+    )
+
+    
+    day_counts = {
+        2: 0,  
+        3: 0,  
+        4: 0,  
+        5: 0,  
+        6: 0,  
+        7: 0, 
+        1: 0,  
+    }
+
+    for item in weekday_data:
+        day_counts[item['weekday']] = item['total']
+
     context = {
         'sql_count': sql_count,
         'xss_count': xss_count,
         'brute_count': brute_count,
         'cmd_count': cmd_count,
+
+        'mon': day_counts[2],
+        'tue': day_counts[3],
+        'wed': day_counts[4],
+        'thu': day_counts[5],
+        'fri': day_counts[6],
+        'sat': day_counts[7],
+        'sun': day_counts[1],
     }
+
     return render(request, 'analysis.html', context)
 
 
