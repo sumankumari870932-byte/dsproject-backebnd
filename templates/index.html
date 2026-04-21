@@ -62,13 +62,9 @@ margin-top:10px;
 }
 
 
-.navlinks li.active a {
+.navlinks a.active {
   color: #00f2ff;
   border-bottom: 2px solid #00f2ff;
-}
-
-/* optional glow effect */
-.navlinks li.active a {
   box-shadow: 0 0 10px #00f2ff;
 }
 
@@ -349,13 +345,19 @@ font-size:12px;
 </div>
 
 <div class="navlinks">
-<a href="{% url 'dashboard' %}">Dashboard</a>
-<a href="{% url 'logs' %}">Attack Logs</a>
-<a href="{% url 'monitor' %}">Live Monitor</a>
-<a href="{% url 'attackers' %}">Attackers</a>
-<a href="{% url 'analysis' %}">Analysis</a>
-<a href="{% url 'settings' %}">Settings</a>
-<a href="{% url 'login' %}">Login</a>
+<a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+
+<a href="{% url 'logs' %}" class="{% if request.resolver_match.url_name == 'logs' %}active{% endif %}">Attack Logs</a>
+
+<a href="{% url 'monitor' %}" class="{% if request.resolver_match.url_name == 'monitor' %}active{% endif %}">Live Monitor</a>
+
+<a href="{% url 'attackers' %}" class="{% if request.resolver_match.url_name == 'attackers' %}active{% endif %}">Attackers</a>
+
+<a href="{% url 'analysis' %}" class="{% if request.resolver_match.url_name == 'analysis' %}active{% endif %}">Analysis</a>
+
+<a href="{% url 'settings' %}" class="{% if request.resolver_match.url_name == 'settings' %}active{% endif %}">Settings</a>
+
+<a href="{% url 'login' %}" class="{% if request.resolver_match.url_name == 'login' %}active{% endif %}">Login</a>
 </div>
 </header>
 
