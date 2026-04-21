@@ -46,8 +46,22 @@ def dashboard(request):
 
 
 def logs_view(request):
-    attacks = Attack.objects.order_by('-time')
-    return render(request, 'logs.html', {'attacks': attacks})
+    query = request.GET.get('q')
+
+    attacks = Attack.objects.all()
+
+    if query:
+        attacks = attacks.filter(
+            ip_address__icontains=query
+        ) | attacks.filter(
+            attack_type__icontains=query
+        )
+
+    attacks = attacks.order_by('-time')
+
+    return render(request, 'logs.html', {
+        'attacks': attacks
+    })
 
 
 def monitor_view(request):

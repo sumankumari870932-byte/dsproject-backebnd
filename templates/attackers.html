@@ -55,6 +55,8 @@ margin-top:10px;   /* ❗ not 80px */
 text-decoration:none;
 color:#f2f4f6;
 font-size:14px;
+font-weight:500;
+
 }
 
 .navlinks a:hover{
@@ -138,7 +140,7 @@ object-fit:contain;
 <div class="navlinks">
 <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
 
-<a href="{% url 'logs' %}" class="{% if request.resolver_match.url_name == 'logs' %}active{% endif %}">Logs</a>
+<a href="{% url 'logs' %}" class="{% if request.resolver_match.url_name == 'logs' %}active{% endif %}">Attack Logs</a>
 
 <a href="{% url 'monitor' %}" class="{% if request.resolver_match.url_name == 'monitor' %}active{% endif %}">Monitor</a>
 
